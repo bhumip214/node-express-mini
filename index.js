@@ -8,7 +8,7 @@ const db = require("./data/db.js");
 
 server.use(express.json());
 
-// GET request to /api/users
+// GET request
 server.get("/api/users", (req, res) => {
   db.find()
     .then(users => {
@@ -21,7 +21,7 @@ server.get("/api/users", (req, res) => {
     });
 });
 
-//GET request to /api/users/:id
+//GET by ID request
 server.get("/api/users/:id", (req, res) => {
   const { id } = req.params;
 
@@ -39,6 +39,25 @@ server.get("/api/users/:id", (req, res) => {
       res.status(500).json({
         error: "The users information could not be retrieved."
       });
+    });
+});
+
+// DELETE request
+server.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params.id;
+
+  db.remove(id)
+    .then(user => {
+      if (user) {
+        res.status(204).end();
+      } else {
+        res.status(404).json({
+          message: "The user with the specified ID does not exist."
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: "The user could not be removed" });
     });
 });
 
